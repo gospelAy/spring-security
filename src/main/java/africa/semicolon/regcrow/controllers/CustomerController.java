@@ -55,9 +55,10 @@ public class CustomerController {
     @PatchMapping(value = "/{id}", consumes = {JSON_PATCH_CONSTANT})
     public ResponseEntity<?> updateCustomerDetails(@PathVariable Long id, @RequestBody JsonPatch updatePatch){
         try {
-            var response = customerService.updateCustomerDetails(id, updatePatch);
+            var response = customerService.updateCustomerDetails(id, updatePatch, null);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(e);
         }
 

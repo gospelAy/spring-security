@@ -25,7 +25,7 @@ public class Customer {
     private BioData bioData;
     private String firstname;
     private String lastname;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private BankAccount bankAccount;
     private String profileImage;
 
@@ -40,5 +40,22 @@ public class Customer {
     @PrePersist
     public void setTimeCreated(){
         this.timeCreated = LocalDateTime.now();
+    }
+
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", bioData=" + "{" +"email"+bioData.getEmail()
+                +"password"+bioData.getPassword()+
+                "}" +
+                ", firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", bankAccount=" + bankAccount +
+                ", profileImage='" + profileImage + '\'' +
+                ", timeCreated=" + timeCreated +
+                ", lastModifiedDate=" + lastModifiedDate +
+                '}';
     }
 }

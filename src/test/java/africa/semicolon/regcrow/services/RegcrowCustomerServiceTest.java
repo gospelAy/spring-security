@@ -17,7 +17,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 import static java.math.BigInteger.*;
@@ -34,12 +37,12 @@ public class RegcrowCustomerServiceTest {
 
     @BeforeEach
     public void setUp() throws CustomerRegistrationFailedException {
-//        customerService.deleteAll();
-//        customerRegistrationRequest = new CustomerRegistrationRequest();
-//        customerRegistrationRequest.setEmail("9kicks@email.com");
-//        customerRegistrationRequest.setPassword("");
-//
-//        customerRegistrationResponse = customerService.register(customerRegistrationRequest);
+        customerService.deleteAll();
+        customerRegistrationRequest = new CustomerRegistrationRequest();
+        customerRegistrationRequest.setEmail("9kicks@email.com");
+        customerRegistrationRequest.setPassword("");
+
+        customerRegistrationResponse = customerService.register(customerRegistrationRequest);
     }
     @Test
     public void testThatCustomerCanRegister() throws CustomerRegistrationFailedException {
@@ -56,7 +59,6 @@ public class RegcrowCustomerServiceTest {
     }
 
 
-    //TODO:come back here today 1/6/2023
     @Test
     public void getAllCustomersTest() throws CustomerRegistrationFailedException {
         customerRegistrationRequest.setEmail("Felix@gmail.com");
@@ -79,18 +81,26 @@ public class RegcrowCustomerServiceTest {
 
 
     @Test
-    public void updateCustomerTest() throws UserNotFoundException, ProfileUpdateFailedException {
+    public void updateCustomerTest() throws UserNotFoundException, ProfileUpdateFailedException, IOException {
         JsonPatch updateForm = buildUpdatePatch();
         CustomerResponse foundCustomer = customerService.getCustomerById(customerRegistrationResponse.getId());
         assertThat(foundCustomer.getName().contains("Folahan")
                 &&foundCustomer.getName().contains("Doe")).isFalse();
 
-        var response = customerService.updateCustomerDetails(customerRegistrationResponse.getId(), updateForm);
+        var response =
+                customerService.updateCustomerDetails(customerRegistrationResponse.getId(),
+                        updateForm,
+                        new MockMultipartFile("2 goats",
+                                new FileInputStream("C:\\Users\\semicolon\\Documents\\java_workspace\\regcrow\\src\\test\\resources\\assets\\goat.jpg")
+                        ));
+
         assertThat(response).isNotNull();
+        foundCustomer = customerService.getCustomerById(customerRegistrationResponse.getId());
+        assertThat(foundCustomer.getProfileImage()).isNotNull();
 
         CustomerResponse customerResponse = customerService.getCustomerById(customerRegistrationResponse.getId());
         assertThat(customerResponse.getName().contains("Folahan")
-                &&customerResponse.getName().contains("Doe")).isTrue();
+                &&customerResponse.getName().contains("Joshua")).isTrue();
     }
 
     private JsonPatch buildUpdatePatch() {
@@ -103,6 +113,18 @@ public class RegcrowCustomerServiceTest {
                     new ReplaceOperation(
                             new JsonPointer("/lastname"),
                             new TextNode("Joshua")
+                    ),
+                    new ReplaceOperation(
+                            new JsonPointer("/bankAccount/accountName"),
+                            new TextNode("Folahan Joshua")
+                    ),
+                    new ReplaceOperation(
+                            new JsonPointer("/bankAccount/accountNumber"),
+                            new TextNode("0123456789")
+                    ),
+                    new ReplaceOperation(
+                            new JsonPointer("/bankAccount/bankName"),
+                            new TextNode("Prof-Pay")
                     )
             );
             return new JsonPatch(updates);

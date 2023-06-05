@@ -8,6 +8,7 @@ import africa.semicolon.regcrow.exceptions.CustomerRegistrationFailedException;
 import africa.semicolon.regcrow.exceptions.ProfileUpdateFailedException;
 import africa.semicolon.regcrow.exceptions.UserNotFoundException;
 import com.github.fge.jsonpatch.JsonPatch;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,5 +25,5 @@ public interface CustomerService {
 
     void deleteAll();
 
-    ApiResponse<?> updateCustomerDetails(Long id, JsonPatch jsonPatch) throws UserNotFoundException, ProfileUpdateFailedException;
+    ApiResponse<?> updateCustomerDetails(Long id, JsonPatch jsonPatch, MultipartFile image) throws UserNotFoundException, ProfileUpdateFailedException;
 }

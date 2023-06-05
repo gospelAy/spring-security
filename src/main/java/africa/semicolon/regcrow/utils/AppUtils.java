@@ -10,6 +10,13 @@ public class AppUtils {
 
     public static final int ZERO = 0;
 
+    public static final String CLOUDINARY_API_KEY = "${cloudinary.api.key}";
+    public static final String CLOUDINARY_CLOUD_NAME="${cloudinary.cloud.name}";
+
+    public static final String CLOUDINARY_API_SECRET="${cloudinary.api.secret}";
+
+    public static final String CLOUDINARY_IMAGE_URL="secure_url";
+
     public static final String JSON_PATCH_CONSTANT="application/json-patch+json";
 
     public static  final int DEFAULT_PAGE_NUMBER = 1;
