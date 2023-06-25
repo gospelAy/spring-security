@@ -2,9 +2,11 @@ package africa.semicolon.regcrow.services;
 
 
 import africa.semicolon.regcrow.dtos.request.CustomerRegistrationRequest;
+import africa.semicolon.regcrow.dtos.request.UpdateCustomerRequest;
 import africa.semicolon.regcrow.dtos.response.CustomerRegistrationResponse;
 import africa.semicolon.regcrow.dtos.response.CustomerResponse;
 import africa.semicolon.regcrow.exceptions.CustomerRegistrationFailedException;
+import africa.semicolon.regcrow.exceptions.ProfileUpdateFailedException;
 import africa.semicolon.regcrow.exceptions.RegCrowException;
 import africa.semicolon.regcrow.exceptions.UserNotFoundException;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -17,7 +19,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 import static java.math.BigInteger.*;
@@ -81,59 +87,35 @@ public class RegcrowCustomerServiceTest {
         assertThat(currentCustomers.size()).isEqualTo(numberOfCustomers-ONE.intValue());
     }
 
-//
-//    @Test
-//    public void updateCustomerTest() throws UserNotFoundException, ProfileUpdateFailedException, IOException {
-//        JsonPatch updateForm = buildUpdatePatch();
-//        CustomerResponse foundCustomer = customerService.getCustomerById(customerRegistrationResponse.getId());
-//        assertThat(foundCustomer.getName().contains("Folahan")
-//                &&foundCustomer.getName().contains("Doe")).isFalse();
-//
-//        var response =
-//                customerService.updateCustomerDetails(customerRegistrationResponse.getId(),
-//                        updateForm,
-//                        new MockMultipartFile("2 goats",
-//                                new FileInputStream("C:\\Users\\semicolon\\Documents\\java_workspace\\regcrow\\src\\test\\resources\\assets\\goat.jpg")
-//                        ));
-//
-//        assertThat(response).isNotNull();
-//        foundCustomer = customerService.getCustomerById(customerRegistrationResponse.getId());
-//        assertThat(foundCustomer.getProfileImage()).isNotNull();
-//
-//        CustomerResponse customerResponse = customerService.getCustomerById(customerRegistrationResponse.getId());
-//        assertThat(customerResponse.getName().contains("Folahan")
-//                &&customerResponse.getName().contains("Joshua")).isTrue();
-//    }
 
-    private JsonPatch buildUpdatePatch() {
-        try {
-            List<JsonPatchOperation> updates = List.of(
-                    new ReplaceOperation(
-                            new JsonPointer("/firstname"),
-                            new TextNode("Folahan")
-                    ),
-                    new ReplaceOperation(
-                            new JsonPointer("/lastname"),
-                            new TextNode("Joshua")
-                    ),
-                    new ReplaceOperation(
-                            new JsonPointer("/bankAccount/accountName"),
-                            new TextNode("Folahan Joshua")
-                    ),
-                    new ReplaceOperation(
-                            new JsonPointer("/bankAccount/accountNumber"),
-                            new TextNode("0123456789")
-                    ),
-                    new ReplaceOperation(
-                            new JsonPointer("/bankAccount/bankName"),
-                            new TextNode("Prof-Pay")
-                    )
-            );
-            return new JsonPatch(updates);
-        } catch (JsonPointerException e) {
-            throw new RuntimeException(e);
-        }
+    @Test
+    public void updateCustomerTest() throws Exception {
+        CustomerResponse foundCustomer = customerService.getCustomerById(customerRegistrationResponse.getId());
+        assertThat(foundCustomer.getName().contains("Moyin")
+                &&foundCustomer.getName().contains("Zainab")).isFalse();
+
+        UpdateCustomerRequest updateCustomerRequest = new UpdateCustomerRequest();
+        var image = new MockMultipartFile("2 goats",
+                new FileInputStream("C:\\Users\\semicolon\\Documents\\java_workspace\\regcrow\\src\\test\\resources\\assets\\goat.jpg")
+        );
+        updateCustomerRequest.setProfileImage(image);
+        updateCustomerRequest.setFirstname("Moyin");
+        updateCustomerRequest.setLastname("Zainab");
+        updateCustomerRequest.setBankName("Zen Bank");
+        updateCustomerRequest.setAccountName("Moyin Zainab");
+        updateCustomerRequest.setAccountNumber("0123456789");
+        var response =
+                customerService.updateCustomerDetails(customerRegistrationResponse.getId(),
+                        updateCustomerRequest
+                        );
+
+        assertThat(response).isNotNull();
+        foundCustomer = customerService.getCustomerById(customerRegistrationResponse.getId());
+        assertThat(foundCustomer.getProfileImage()).isNotNull();
+
+        CustomerResponse customerResponse = customerService.getCustomerById(customerRegistrationResponse.getId());
+        assertThat(customerResponse.getName().contains("Moyin")
+                &&customerResponse.getName().contains("Zainab")).isTrue();
     }
-
 
 }

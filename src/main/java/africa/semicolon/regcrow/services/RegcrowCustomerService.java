@@ -8,11 +8,14 @@ import africa.semicolon.regcrow.exceptions.*;
 import africa.semicolon.regcrow.models.BankAccount;
 import africa.semicolon.regcrow.models.BioData;
 import africa.semicolon.regcrow.models.Customer;
+import africa.semicolon.regcrow.models.Role;
 import africa.semicolon.regcrow.repositories.CustomerRepository;
 import africa.semicolon.regcrow.services.cloud.CloudService;
 import africa.semicolon.regcrow.services.notification.mail.MailService;
+import africa.semicolon.regcrow.utils.JwtUtil;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,6 +30,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,50 +41,46 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static africa.semicolon.regcrow.models.Role.CUSTOMER;
 import static africa.semicolon.regcrow.utils.AppUtils.*;
 import static africa.semicolon.regcrow.utils.ExceptionUtils.*;
 import static africa.semicolon.regcrow.utils.ResponseUtils.*;
+import static java.time.Instant.now;
 
 
 @Service
 @AllArgsConstructor
 @Slf4j
-public class RegcrowCustomerService implements CustomerService{
+public class RegcrowCustomerService implements CustomerService {
     private final CustomerRepository customerRepository;
     private final ModelMapper modelMapper;
     private final CloudService cloudService;
     private final MailService mailService;
+    private final JwtUtil jwtUtil;
 
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public CustomerRegistrationResponse register(CustomerRegistrationRequest customerRegistrationRequest) throws RegCrowException {
-        BioData bioData = new BioData();
-        modelMapper.map(customerRegistrationRequest, bioData);
+        BioData bioData=modelMapper.map(customerRegistrationRequest, BioData.class);
+        bioData.setPassword(passwordEncoder.encode(bioData.getPassword()));
+        bioData.setRoles(new HashSet<>());
         Customer customer=new Customer();
         customer.setBioData(bioData);
         customer.setBankAccount(new BankAccount());
+        bioData.getRoles().add(CUSTOMER);
         Customer savedCustomer=customerRepository.save(customer);
         EmailNotificationRequest emailNotificationRequest = buildEmailRequest(savedCustomer);
-        var response = mailService.sendMail(emailNotificationRequest);
-        log.info("response-->{}", response);
-        boolean isSavedCustomer = savedCustomer.getId() != null;
-        if (!isSavedCustomer) throw new CustomerRegistrationFailedException(String.format(USER_REGISTRATION_FAILED, customerRegistrationRequest.getEmail()));
+        mailService.sendMail(emailNotificationRequest);
         return buildRegisterCustomerResponse(savedCustomer.getId());
     }
 
     private EmailNotificationRequest buildEmailRequest(Customer customer) throws RegCrowException {
-        String token = JWT.create()
-                .withIssuedAt(Instant.now())
-                .withExpiresAt(Instant.now().plusSeconds(60L))
-                .sign(Algorithm.HMAC512("secret".getBytes()));
+        String token = generateToken(customer, jwtUtil.getSecret());
         EmailNotificationRequest request = new EmailNotificationRequest();
         Sender sender = new Sender(APP_NAME, APP_EMAIL);
         Recipient recipient = new Recipient(customer.getFirstname(), customer.getBioData().getEmail());
@@ -85,7 +88,7 @@ public class RegcrowCustomerService implements CustomerService{
         request.setRecipients(Set.of(recipient));
         request.setSubject(ACTIVATION_LINK_VALUE);
         String template = getEmailTemplate();
-        request.setContent(String.format(template, ACTIVATE_ACCOUNT_URL+"?"+token));
+        request.setContent(String.format(template, FRONTEND_BASE_URL+"/customer/verify?token="+token));
         return request;
     }
 
@@ -94,7 +97,7 @@ public class RegcrowCustomerService implements CustomerService{
                     new BufferedReader(new FileReader(MAIL_TEMPLATE_LOCATION))){
              return  reader.lines().collect(Collectors.joining());
         }catch (IOException exception){
-            throw new RegCrowException("Failed to send activation link");
+            throw new RegCrowException(FAILED_TO_GET_ACTIVATION_LINK);
         }
     }
 
@@ -110,10 +113,19 @@ public class RegcrowCustomerService implements CustomerService{
 
     @Override
     public ApiResponse<?> verifyCustomer(String token) throws RegCrowException {
-        DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512("secret".getBytes()))
+        DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512(jwtUtil.getSecret().getBytes()))
                 .build().verify(token);
-        if (decodedJWT==null) throw new RegCrowException("):");
-        return ApiResponse.builder().message("Account Verified").build();
+        if (decodedJWT==null) throw new RegCrowException(ACCOUNT_VERIFICATION_FAILED);
+        Claim claim = decodedJWT.getClaim(ID);
+        Long id = claim.asLong();
+        Customer foundCustomer = customerRepository.findById(id)
+                .orElseThrow(()->new UserNotFoundException(
+                        String.format(USER_WITH_ID_NOT_FOUND, id)));
+        foundCustomer.getBioData().setIsEnabled(true);
+        customerRepository.save(foundCustomer);
+        return ApiResponse.builder()
+                .message(ACCOUNT_VERIFIED_SUCCESSFULLY)
+                .build();
     }
 
     @Override
@@ -138,7 +150,7 @@ public class RegcrowCustomerService implements CustomerService{
         return CustomerResponse.builder()
                                .id(customer.getId())
                                .email(customer.getBioData().getEmail())
-                               .name(customer.getFirstname()+" "+customer.getLastname())
+                               .name(customer.getFirstname()+EMPTY_SPACE_VALUE+customer.getLastname())
                                .profileImage(customer.getProfileImage())
                                .build();
     }
@@ -228,4 +240,5 @@ public class RegcrowCustomerService implements CustomerService{
 
         return customerRegistrationResponse;
     }
+
 }

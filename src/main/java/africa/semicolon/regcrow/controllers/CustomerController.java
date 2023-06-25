@@ -5,9 +5,7 @@ import africa.semicolon.regcrow.dtos.request.CustomerRegistrationRequest;
 import africa.semicolon.regcrow.dtos.request.UpdateCustomerRequest;
 import africa.semicolon.regcrow.dtos.response.ApiResponse;
 import africa.semicolon.regcrow.dtos.response.CustomerRegistrationResponse;
-import africa.semicolon.regcrow.dtos.response.CustomerResponse;
 import africa.semicolon.regcrow.exceptions.RegCrowException;
-import africa.semicolon.regcrow.repositories.CustomerRepository;
 import africa.semicolon.regcrow.services.CustomerService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,7 +31,25 @@ public class CustomerController {
         }
     }
 
-    @PatchMapping
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllCustomers(@RequestParam int page, @RequestParam int size){
+        return ResponseEntity.ok(customerService.getAllCustomers(page, size));
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<?> verifyCustomer(@RequestHeader(value = "token") String token){
+        try {
+            var response = customerService.verifyCustomer(token);
+            return ResponseEntity.ok(response);
+        }catch (Exception exception){
+            ApiResponse<?> response = ApiResponse.builder()
+                    .message(exception.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PatchMapping()
     public ResponseEntity<?> updateCustomerAccount(@RequestParam Long id, @ModelAttribute UpdateCustomerRequest updateCustomerRequest){
         try{
             var response = customerService.updateCustomerDetails(id, updateCustomerRequest);

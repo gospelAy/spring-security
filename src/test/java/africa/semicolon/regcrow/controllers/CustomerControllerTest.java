@@ -23,6 +23,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.RequestEntity.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -42,9 +44,9 @@ class CustomerControllerTest {
         registrationRequest.setEmail("test@email.com");
         registrationRequest.setPassword("tinu");
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/customer")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(APPLICATION_JSON_VALUE)
                 .content(mapper.writeValueAsBytes(registrationRequest)))
-                .andExpect(MockMvcResultMatchers.status().is(HttpStatus.CREATED.value()))
+                .andExpect(MockMvcResultMatchers.status().is(CREATED.value()))
                 .andDo(print());
     }
 

@@ -1,5 +1,6 @@
 package africa.semicolon.regcrow.config;
 
+import africa.semicolon.regcrow.utils.JwtUtil;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.modelmapper.ModelMapper;
@@ -20,6 +21,9 @@ public class BeanConfig {
    @Value(MAIL_API_KEY)
    private String mailApiKey;
 
+   @Value(JWT_SIGNING_SECRET)
+   private String jwt_secret;
+
     @Bean
     public ModelMapper modelMapper(){
         return new ModelMapper();
@@ -37,6 +41,11 @@ public class BeanConfig {
     @Bean
     public MailConfig mailConfig(){
         return new MailConfig(mailApiKey);
+    }
+
+    @Bean
+    public JwtUtil jwtUtil(){
+        return new JwtUtil(jwt_secret);
     }
 
 

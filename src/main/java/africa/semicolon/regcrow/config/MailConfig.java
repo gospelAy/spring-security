@@ -8,5 +8,4 @@ import lombok.Getter;
 @AllArgsConstructor
 public class MailConfig {
     private final String mailApiKey;
-
 }

@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Set;
 
+import static africa.semicolon.regcrow.utils.AppUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -19,9 +20,9 @@ public class SendInBlueMailServiceTest {
 
     @Test
     public void testSendMail(){
-        Sender sender = new Sender("regcrow inc.", "noreply@regcrow.com");
+        Sender sender = new Sender(APP_NAME, APP_EMAIL);
 
-        Recipient recipient = new Recipient("Tinu", "recelo5446@vaband.com");
+        Recipient recipient = new Recipient("Tinu", "corevem307@camplvad.com");
 
         EmailNotificationRequest emailNotificationRequest = new EmailNotificationRequest();
         emailNotificationRequest.setEmailSender(sender);

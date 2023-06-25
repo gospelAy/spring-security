@@ -28,7 +28,6 @@ public class Customer {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private BankAccount bankAccount;
     private String profileImage;
-
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timeCreated;
@@ -41,7 +40,6 @@ public class Customer {
     public void setTimeCreated(){
         this.timeCreated = LocalDateTime.now();
     }
-
 
     @Override
     public String toString() {

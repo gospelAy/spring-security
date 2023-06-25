@@ -13,6 +13,7 @@ import java.net.URI;
 
 import static africa.semicolon.regcrow.utils.AppUtils.API_KEY_VALUE;
 import static africa.semicolon.regcrow.utils.AppUtils.EMAIL_URL;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Service
 @AllArgsConstructor
@@ -25,12 +26,14 @@ public class SendInBlueMailService implements MailService{
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set(API_KEY_VALUE, mailConfig.getMailApiKey());
+        httpHeaders.set("accept", APPLICATION_JSON_VALUE);
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
         RequestEntity<EmailNotificationRequest> entity =
                 new RequestEntity<>(emailNotificationRequest,httpHeaders, HttpMethod.POST, URI.create(EMAIL_URL));
         ResponseEntity<SendMailResponse> response =
                 restTemplate.postForEntity(EMAIL_URL, entity, SendMailResponse.class);
+
 
         return response.getBody();
     }
