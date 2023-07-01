@@ -4,11 +4,13 @@ import africa.semicolon.regcrow.dtos.request.*;
 import africa.semicolon.regcrow.dtos.response.ApiResponse;
 import africa.semicolon.regcrow.dtos.response.CustomerRegistrationResponse;
 import africa.semicolon.regcrow.dtos.response.CustomerResponse;
-import africa.semicolon.regcrow.exceptions.*;
+import africa.semicolon.regcrow.exceptions.ImageUploadFailedException;
+import africa.semicolon.regcrow.exceptions.ProfileUpdateFailedException;
+import africa.semicolon.regcrow.exceptions.RegCrowException;
+import africa.semicolon.regcrow.exceptions.UserNotFoundException;
 import africa.semicolon.regcrow.models.BankAccount;
 import africa.semicolon.regcrow.models.BioData;
 import africa.semicolon.regcrow.models.Customer;
-import africa.semicolon.regcrow.models.Role;
 import africa.semicolon.regcrow.repositories.CustomerRepository;
 import africa.semicolon.regcrow.services.cloud.CloudService;
 import africa.semicolon.regcrow.services.notification.mail.MailService;
@@ -30,9 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,7 +48,6 @@ import static africa.semicolon.regcrow.models.Role.CUSTOMER;
 import static africa.semicolon.regcrow.utils.AppUtils.*;
 import static africa.semicolon.regcrow.utils.ExceptionUtils.*;
 import static africa.semicolon.regcrow.utils.ResponseUtils.*;
-import static java.time.Instant.now;
 
 
 @Service

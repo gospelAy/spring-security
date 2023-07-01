@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+
 import java.util.Collection;
 import java.util.List;
 
@@ -65,13 +66,21 @@ public class AppUtils {
 
     public static final String SUBJECT="subject";
 
+    public static final String CUSTOMER_API_VALUE = "/api/v1/customer";
+
+    public static final String LOGIN_ENDPOINT = "/api/v1/login";
+
+    public static final String UPDATE_CUSTOMER_ENDPOINT=CUSTOMER_API_VALUE+"?*+";
+
+    public static final String TOKEN_PREFIX="Bearer ";
+
     public static  final String HTML_CONTENT_VALUE = "htmlContent";
 
     public static final String CLAIMS_VALUE = "ROLES";
 
     public static final String CLAIM_VALUE = "claim";
 
-    public static final String FIELD_CANNOT_BE_EMPTY_VALUE="field must not be empty";
+    public static final String FIELD_MUST_NOT_BE_EMPTY ="field must not be empty";
 
     public static final String ACCESS_TOKEN_VALUE = "access_token";
 
@@ -96,5 +105,11 @@ public class AppUtils {
                 .stream()
                 .map(grantedAuthority -> new SimpleGrantedAuthority(grantedAuthority.getAuthority()))
                 .toList();
+    }
+
+    public static List<String> getAuthWhiteList(){
+        return List.of(
+                CUSTOMER_API_VALUE, LOGIN_ENDPOINT
+        );
     }
 }

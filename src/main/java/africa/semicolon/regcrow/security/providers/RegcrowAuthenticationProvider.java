@@ -1,6 +1,5 @@
 package africa.semicolon.regcrow.security.providers;
 
-import africa.semicolon.regcrow.security.user.User;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -11,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +31,7 @@ public class RegcrowAuthenticationProvider implements AuthenticationProvider {
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
         String userEmail = userDetails.getUsername();
         String userPassword = userDetails.getPassword();
-        Collection<SimpleGrantedAuthority> authorities = getAuthorities(userDetails.getAuthorities());
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
 
         if (passwordEncoder.matches(password, userPassword)){
             authResult = new UsernamePasswordAuthenticationToken(userEmail, userPassword, authorities);

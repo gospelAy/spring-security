@@ -21,6 +21,6 @@ public class RegcrowAuthenticationManager implements AuthenticationManager {
             authResult = authenticationProvider.authenticate(authentication);
 
             return authResult;
-        }else throw new BadCredentialsException("):");
+        } else throw new BadCredentialsException("):");
     }
 }
