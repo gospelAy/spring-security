@@ -43,6 +43,7 @@ class CustomerControllerTest {
         CustomerRegistrationRequest registrationRequest = new CustomerRegistrationRequest();
         registrationRequest.setEmail("test@email.com");
         registrationRequest.setPassword("tinu");
+
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/customer")
                 .contentType(APPLICATION_JSON_VALUE)
                 .content(mapper.writeValueAsBytes(registrationRequest)))
