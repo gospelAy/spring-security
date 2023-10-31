@@ -47,6 +47,4 @@ public class BeanConfig {
     public JwtUtil jwtUtil(){
         return new JwtUtil(jwt_secret);
     }
-
-
 }

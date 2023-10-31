@@ -1,5 +1,4 @@
 package africa.semicolon.regcrow.services;
-
 import africa.semicolon.regcrow.dtos.request.*;
 import africa.semicolon.regcrow.dtos.response.ApiResponse;
 import africa.semicolon.regcrow.dtos.response.CustomerRegistrationResponse;
@@ -133,7 +132,7 @@ public class RegcrowCustomerService implements CustomerService {
         List<Customer> customers=customerPage.getContent();
         return customers.stream()
                         .map(RegcrowCustomerService::buildCustomerResponse)
-                        .toList();
+                .toList();
     }
 
     @Override
@@ -154,7 +153,7 @@ public class RegcrowCustomerService implements CustomerService {
     }
 
     @Override
-    public void deleteAll() {
+    public void deleteAll()  {
         customerRepository.deleteAll();
     }
 
@@ -238,5 +237,4 @@ public class RegcrowCustomerService implements CustomerService {
 
         return customerRegistrationResponse;
     }
-
 }

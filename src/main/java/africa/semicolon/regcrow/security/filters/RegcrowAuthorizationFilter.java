@@ -90,6 +90,4 @@ public class RegcrowAuthorizationFilter extends OncePerRequestFilter {
         String role = claim.asMap().get(CLAIM_VALUE).toString();
         authorities.add(new SimpleGrantedAuthority(role));
     }
-
-
 }

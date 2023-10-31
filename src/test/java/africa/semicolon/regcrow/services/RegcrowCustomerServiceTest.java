@@ -6,15 +6,8 @@ import africa.semicolon.regcrow.dtos.request.UpdateCustomerRequest;
 import africa.semicolon.regcrow.dtos.response.CustomerRegistrationResponse;
 import africa.semicolon.regcrow.dtos.response.CustomerResponse;
 import africa.semicolon.regcrow.exceptions.CustomerRegistrationFailedException;
-import africa.semicolon.regcrow.exceptions.ProfileUpdateFailedException;
 import africa.semicolon.regcrow.exceptions.RegCrowException;
 import africa.semicolon.regcrow.exceptions.UserNotFoundException;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.github.fge.jackson.jsonpointer.JsonPointer;
-import com.github.fge.jackson.jsonpointer.JsonPointerException;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchOperation;
-import com.github.fge.jsonpatch.ReplaceOperation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
 
 import static java.math.BigInteger.*;

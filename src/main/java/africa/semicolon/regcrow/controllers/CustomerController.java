@@ -50,11 +50,11 @@ public class CustomerController {
     }
 
     @PatchMapping()
-    public ResponseEntity<?> updateCustomerAccount(@RequestParam Long id, @ModelAttribute UpdateCustomerRequest updateCustomerRequest){
-        try{
+    public ResponseEntity<?> updateCustomerAccount(@RequestParam Long id, @ModelAttribute UpdateCustomerRequest updateCustomerRequest) {
+        try {
             var response = customerService.updateCustomerDetails(id, updateCustomerRequest);
             return ResponseEntity.ok(response);
-        }catch (Exception exception){
+        } catch (Exception exception) {
             return ResponseEntity.badRequest().body(exception.getMessage());
         }
     }

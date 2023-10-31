@@ -34,7 +34,6 @@ public class SendInBlueMailService implements MailService{
         ResponseEntity<SendMailResponse> response =
                 restTemplate.postForEntity(EMAIL_URL, entity, SendMailResponse.class);
 
-
         return response.getBody();
     }
 }

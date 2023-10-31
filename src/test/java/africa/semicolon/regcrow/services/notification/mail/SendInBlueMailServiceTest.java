@@ -17,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SendInBlueMailServiceTest {
     @Autowired
     private MailService mailService;
-
     @Test
     public void testSendMail(){
         Sender sender = new Sender(APP_NAME, APP_EMAIL);
@@ -31,7 +30,7 @@ public class SendInBlueMailServiceTest {
         emailNotificationRequest.setContent("<p>Hit the ground running</p>");
         emailNotificationRequest.setSubject("Y'ello");
 
-        var response =mailService.sendMail(emailNotificationRequest);
+        var response = mailService.sendMail(emailNotificationRequest);
 
         assertThat(response).isNotNull();
 

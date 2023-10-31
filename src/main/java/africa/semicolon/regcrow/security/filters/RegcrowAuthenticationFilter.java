@@ -1,8 +1,6 @@
 package africa.semicolon.regcrow.security.filters;
 
-import africa.semicolon.regcrow.dtos.request.CustomerRegistrationRequest;
 import africa.semicolon.regcrow.dtos.request.LoginRequest;
-import africa.semicolon.regcrow.models.BioData;
 import africa.semicolon.regcrow.utils.JwtUtil;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -23,11 +21,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static africa.semicolon.regcrow.utils.AppUtils.*;
 import static africa.semicolon.regcrow.utils.ExceptionUtils.AUTHENTICATION_FAILED_FOR_USER_WITH_EMAIL;

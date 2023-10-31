@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-
 import java.util.Collection;
 import java.util.List;
 
@@ -52,9 +51,10 @@ public class AppUtils {
     public static final String APP_EMAIL="noreply@regcrow.africa";
 
 
-    public static final String EMAIL_URL="https://api.brevo.com/v3/smtp/email";
+    public static final String EMAIL_URL= "https://api.brevo.com/v3/smtp/email";
 
     public static final String ACTIVATION_LINK_VALUE="Activation Link";
+
 
     public static final String FRONTEND_BASE_URL = "https://www.regcrow.com";
 
@@ -87,7 +87,7 @@ public class AppUtils {
     public static Pageable buildPageRequest(int page, int items){
         if (page<=ZERO) page=DEFAULT_PAGE_NUMBER;
         if (items<=ZERO) items = DEFAULT_PAGE_LIMIT;
-        page-=ONE;
+        page -=ONE;
         return PageRequest.of(page, items);
     }
 
